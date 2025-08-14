@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTSP-Плеер</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; }
+        video { width: 100vw; height: 100vh; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <video id="video" controls autoplay playsinline muted></video>
+    <script>
+        const video = document.getElementById('video');
+        const hlsProxyUrl = "rtsp://rstpuser:rstp!!)user1@158.58.132.10:5555/cam/realmonitor?channel=1&subtype=1"; // Замените на ваш HLS-поток
+
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(hlsProxyUrl);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = hlsProxyUrl;
+            video.play();
+        }
+    </script>
+</body>
+</html>
