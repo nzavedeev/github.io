@@ -1,27 +1,86 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>RTSP-Плеер</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTSP Camera Stream</title>
     <style>
-        body { margin: 0; padding: 0; overflow: hidden; }
-        video { width: 100vw; height: 100vh; object-fit: cover; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        video {
+            width: 100%;
+            border-radius: 4px;
+            background-color: #000;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
-    <video id="video" controls autoplay playsinline muted></video>
+    <div class="container">
+        <h1>RTSP Camera Stream</h1>
+        <video id="video" autoplay playsinline controls></video>
+        <div id="status" class="status disconnected">Disconnected</div>
+    </div>
+
     <script>
         const video = document.getElementById('video');
-        const hlsProxyUrl = "https://rtsp.ru/embed/4NzkQ7rQ/"; // Замените на ваш HLS-поток
+        const statusDiv = document.getElementById('status');
+        const rtspUrl = 'https://rtsp.ru/embed/4NzkQ7rQ';
 
-        if (Hls.isSupported()) {
-            const hls = new Hls();
-            hls.loadSource(hlsProxyUrl);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = hlsProxyUrl;
-            video.play();
+        // Используем WebRTC для трансляции RTSP (через RTSPtoWebRTC или аналоги)
+        // Это упрощённый пример. В реальности вам нужен сервер для преобразования RTSP в WebRTC.
+
+        // Альтернатива: используем iframe с встроенным плеером RTSP
+        function initPlayer() {
+            try {
+                // Если RTSP.ru предоставляет iframe для встраивания, используем его
+                const iframe = document.createElement('iframe');
+                iframe.src = rtspUrl;
+                iframe.width = '100%';
+                iframe.height = '500';
+                iframe.frameBorder = '0';
+                iframe.allowFullscreen = true;
+
+                const container = document.querySelector('.container');
+                container.replaceChild(iframe, video);
+                statusDiv.textContent = 'Connected (via RTSP.ru)';
+                statusDiv.className = 'status connected';
+            } catch (e) {
+                statusDiv.textContent = 'Error: ' + e.message;
+                console.error(e);
+            }
         }
+
+        // Запускаем при загрузке
+        window.onload = initPlayer;
     </script>
 </body>
 </html>
